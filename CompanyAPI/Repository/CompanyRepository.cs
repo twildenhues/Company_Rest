@@ -34,17 +34,11 @@ namespace CompanyAPI.Repository
 		{
 			try
 			{
-				using (SqlCommand command = new SqlCommand("dbo.spCreateOrUpdateCompany", conn))
-				{
-					command.CommandType = System.Data.CommandType.StoredProcedure;
-					DateTime now = new DateTime();
-					now = DateTime.Now;
-					command.Parameters.AddWithValue("@Name", DBNull.Value);
-					command.Parameters.AddWithValue("@Id", CompanyId);
-					command.Parameters.AddWithValue("@Delete", now);
-					int retval = command.ExecuteNonQuery();
-					return (retval > 0);
-				}
+					var param = new DynamicParameters();
+					param.Add("@Name", null);
+					param.Add("@Id", CompanyId);
+					param.Add("@Delete", DateTime.Now);
+					return conn.Execute("dbo.spCreateOrUpdateCompany", param, commandType: CommandType.StoredProcedure) > 0;
 			}
 			catch (SystemException ex)
 			{
@@ -57,11 +51,11 @@ namespace CompanyAPI.Repository
 
 			using (SqlCommand insertCommand = new SqlCommand("dbo.spCreateOrUpdateCompany", conn))
 			{
-				insertCommand.CommandType = System.Data.CommandType.StoredProcedure;
-				insertCommand.Parameters.AddWithValue("@Id", (CompanyId == 0) ? -1 : CompanyId);
-				insertCommand.Parameters.AddWithValue("@Name", value);
-				int dbId = (int)insertCommand.ExecuteScalar();
-				return dbId != 0 ? true : false;
+				var param = new DynamicParameters();
+				param.Add("@Name", value);
+				param.Add("@Id", CompanyId);
+				param.Add("@Delete", null);
+				return conn.Execute("dbo.spCreateOrUpdateCompany", param, commandType: CommandType.StoredProcedure) > 0;
 			}
 		}
 

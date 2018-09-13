@@ -17,7 +17,7 @@ namespace CompanyAPI.Controllers
 		public IActionResult Get()
 		{
 			List<Models.Company> dt = Company.ReadCompany();
-			return dt != null ? StatusCode(StatusCodes.Status200OK) : StatusCode(StatusCodes.Status204NoContent);
+			return dt != null ? StatusCode(StatusCodes.Status200OK, dt) : (IActionResult) StatusCode(StatusCodes.Status204NoContent);
 
 		}
 		// GET api/company/5
@@ -25,29 +25,31 @@ namespace CompanyAPI.Controllers
 		public IActionResult Get(int id)
 		{
 			Models.Company dt = Company.Read(id);
-			return dt != null ? StatusCode(StatusCodes.Status200OK) : StatusCode(StatusCodes.Status204NoContent);
+			return dt != null ? StatusCode(StatusCodes.Status200OK, dt) : (IActionResult) StatusCode(StatusCodes.Status204NoContent);
 		}
 
 		// POST api/values
 		[HttpPost("insert")]
 		public IActionResult Post([FromBody] Models.Company value)
 		{
-			bool resval = Company.CreatingOrUpdatingCompany(0,value.Name);
-			return resval ? StatusCode(StatusCodes.Status200OK) : StatusCode(StatusCodes.Status204NoContent);
+			bool dt = Company.CreatingOrUpdatingCompany(0,value.Name);
+			return dt ? StatusCode(StatusCodes.Status200OK, dt) : (IActionResult) StatusCode(StatusCodes.Status204NoContent);
 		}
 
 		// PUT api/values/5
 		[HttpPut("update")]
 		public IActionResult Put([FromBody] Models.Company value)
 		{
-			bool resval = Company.CreatingOrUpdatingCompany(value.Id, value.Name);
-			return resval ? StatusCode(StatusCodes.Status200OK) : StatusCode(StatusCodes.Status204NoContent);
+			bool dt = Company.CreatingOrUpdatingCompany(value.Id, value.Name);
+			return dt ? StatusCode(StatusCodes.Status200OK, dt) : (IActionResult) StatusCode(StatusCodes.Status204NoContent);
 		}
 
 		// DELETE api/values/5
-		[HttpDelete("{id}")]
-		public void Delete(int id)
+		[HttpDelete("delete")]
+		public IActionResult Delete([FromBody] Models.Company value)
 		{
+			bool resval = Company.DeleteCompany(value.Id);
+			return resval ? StatusCode(StatusCodes.Status200OK) : StatusCode(StatusCodes.Status204NoContent);
 		}
 	}
 }
