@@ -10,18 +10,24 @@ namespace CompanyAPI.Controllers
 	[ApiController]
 	public class CompanyController : Controller
 	{
-		// GET api/values
-		[HttpGet("getall")]
-		public ActionResult<IEnumerable<string>> Get()
-		{
-			return new string[] { "value1", "value2" };
+		Repository.CompanyRepository Company;
+		public CompanyController() {
+			Company = new Repository.CompanyRepository();
 		}
-
-		// GET api/values/5
-		[HttpGet("get/{id}")]
-		public ActionResult<string> Get(int id)
+		// GET api/company/getall
+		[HttpGet("getall")]
+		public List<Models.Company> Get()
 		{
-			return "value";
+			List<Models.Company> dt = Company.ReadCompany();
+			return dt;
+
+		}
+		// GET api/company/5
+		[HttpGet("get/{id}")]
+		public Models.Company Get(int id)
+		{
+			Models.Company dt = Company.Read(id);
+			return dt;
 		}
 
 		// POST api/values
