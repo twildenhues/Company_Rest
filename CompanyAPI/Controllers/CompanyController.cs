@@ -35,7 +35,7 @@ namespace CompanyAPI.Controllers
 		public IActionResult Post([FromBody] Models.Company value)
 		{
 			bool dt = Company.CreatingOrUpdatingCompany(0,value.Name);
-			var reval = dt != null ? StatusCode(StatusCodes.Status200OK, dt) : (IActionResult)StatusCode(StatusCodes.Status204NoContent);
+			var reval = dt? StatusCode(StatusCodes.Status200OK, dt) : (IActionResult)StatusCode(StatusCodes.Status204NoContent);
 			return reval;
 		}
 
