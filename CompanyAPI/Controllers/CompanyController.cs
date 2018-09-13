@@ -17,15 +17,17 @@ namespace CompanyAPI.Controllers
 		public IActionResult Get()
 		{
 			List<Models.Company> dt = Company.ReadCompany();
-			return dt != null ? StatusCode(StatusCodes.Status200OK, dt) : (IActionResult) StatusCode(StatusCodes.Status204NoContent);
+			var reval = dt != null ? StatusCode(StatusCodes.Status200OK, dt) : (IActionResult)StatusCode(StatusCodes.Status204NoContent);
+			return reval;
 
 		}
 		// GET api/company/5
-		[HttpGet]
+		[HttpGet("{id}")]
 		public IActionResult Get(int id)
 		{
 			Models.Company dt = Company.Read(id);
-			return dt != null ? StatusCode(StatusCodes.Status200OK, dt) : (IActionResult) StatusCode(StatusCodes.Status204NoContent);
+			var reval = dt != null ? StatusCode(StatusCodes.Status200OK, dt) : (IActionResult)StatusCode(StatusCodes.Status204NoContent);
+			return reval;
 		}
 
 		// POST api/values
@@ -33,7 +35,8 @@ namespace CompanyAPI.Controllers
 		public IActionResult Post([FromBody] Models.Company value)
 		{
 			bool dt = Company.CreatingOrUpdatingCompany(0,value.Name);
-			return dt ? StatusCode(StatusCodes.Status200OK, dt) : (IActionResult) StatusCode(StatusCodes.Status204NoContent);
+			var reval = dt != null ? StatusCode(StatusCodes.Status200OK, dt) : (IActionResult)StatusCode(StatusCodes.Status204NoContent);
+			return reval;
 		}
 
 		// PUT api/values/5
@@ -41,15 +44,17 @@ namespace CompanyAPI.Controllers
 		public IActionResult Put([FromBody] Models.Company value)
 		{
 			bool dt = Company.CreatingOrUpdatingCompany(value.Id, value.Name);
-			return dt ? StatusCode(StatusCodes.Status200OK, dt) : (IActionResult) StatusCode(StatusCodes.Status204NoContent);
+			var resval = dt ? StatusCode(StatusCodes.Status200OK, dt) : (IActionResult)StatusCode(StatusCodes.Status204NoContent);
+			return resval;
 		}
 
 		// DELETE api/values/5
 		[HttpDelete]
 		public IActionResult Delete([FromBody] Models.Company value)
 		{
-			bool resval = Company.DeleteCompany(value.Id);
-			return resval ? StatusCode(StatusCodes.Status200OK) : StatusCode(StatusCodes.Status204NoContent);
+			bool dt = Company.DeleteCompany(value.Id);
+			var resval = dt? StatusCode(StatusCodes.Status200OK) : StatusCode(StatusCodes.Status204NoContent);
+			return resval;
 		}
 	}
 }
