@@ -13,7 +13,7 @@ namespace CompanyAPI.Controllers
 			Company = new Repository.CompanyRepository();
 		}
 		// GET api/company/getall
-		[HttpGet("getall")]
+		[HttpGet]
 		public IActionResult Get()
 		{
 			List<Models.Company> dt = Company.ReadCompany();
@@ -21,7 +21,7 @@ namespace CompanyAPI.Controllers
 
 		}
 		// GET api/company/5
-		[HttpGet("get/{id}")]
+		[HttpGet]
 		public IActionResult Get(int id)
 		{
 			Models.Company dt = Company.Read(id);
@@ -29,7 +29,7 @@ namespace CompanyAPI.Controllers
 		}
 
 		// POST api/values
-		[HttpPost("insert")]
+		[HttpPost]
 		public IActionResult Post([FromBody] Models.Company value)
 		{
 			bool dt = Company.CreatingOrUpdatingCompany(0,value.Name);
@@ -37,7 +37,7 @@ namespace CompanyAPI.Controllers
 		}
 
 		// PUT api/values/5
-		[HttpPut("update")]
+		[HttpPut]
 		public IActionResult Put([FromBody] Models.Company value)
 		{
 			bool dt = Company.CreatingOrUpdatingCompany(value.Id, value.Name);
@@ -45,7 +45,7 @@ namespace CompanyAPI.Controllers
 		}
 
 		// DELETE api/values/5
-		[HttpDelete("delete")]
+		[HttpDelete]
 		public IActionResult Delete([FromBody] Models.Company value)
 		{
 			bool resval = Company.DeleteCompany(value.Id);
