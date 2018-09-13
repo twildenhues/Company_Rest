@@ -52,7 +52,7 @@ namespace CompanyAPI.Repository
 				return false;
 			}
 		}
-		public Models.Company CreatingOrUpdatingCompany(int CompanyId, string value)
+		public bool CreatingOrUpdatingCompany(int CompanyId, string value)
 		{
 
 			using (SqlCommand insertCommand = new SqlCommand("dbo.spCreateOrUpdateCompany", conn))
@@ -61,7 +61,7 @@ namespace CompanyAPI.Repository
 				insertCommand.Parameters.AddWithValue("@Id", (CompanyId == 0) ? -1 : CompanyId);
 				insertCommand.Parameters.AddWithValue("@Name", value);
 				int dbId = (int)insertCommand.ExecuteScalar();
-				return Read(dbId);
+				return dbId != 0 ? true : false;
 			}
 		}
 

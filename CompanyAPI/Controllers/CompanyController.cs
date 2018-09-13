@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Http;
 
 namespace CompanyAPI.Controllers
 {
@@ -16,30 +14,34 @@ namespace CompanyAPI.Controllers
 		}
 		// GET api/company/getall
 		[HttpGet("getall")]
-		public List<Models.Company> Get()
+		public IActionResult Get()
 		{
 			List<Models.Company> dt = Company.ReadCompany();
-			return dt;
+			return dt != null ? StatusCode(StatusCodes.Status200OK) : StatusCode(StatusCodes.Status204NoContent);
 
 		}
 		// GET api/company/5
 		[HttpGet("get/{id}")]
-		public Models.Company Get(int id)
+		public IActionResult Get(int id)
 		{
 			Models.Company dt = Company.Read(id);
-			return dt;
+			return dt != null ? StatusCode(StatusCodes.Status200OK) : StatusCode(StatusCodes.Status204NoContent);
 		}
 
 		// POST api/values
 		[HttpPost("insert")]
-		public void Post([FromBody] string value)
+		public IActionResult Post([FromBody] Models.Company value)
 		{
+			bool resval = Company.CreatingOrUpdatingCompany(0,value.Name);
+			return resval ? StatusCode(StatusCodes.Status200OK) : StatusCode(StatusCodes.Status204NoContent);
 		}
 
 		// PUT api/values/5
-		[HttpPut("update/{id}")]
-		public void Put(int id, [FromBody] string value)
+		[HttpPut("update")]
+		public IActionResult Put([FromBody] Models.Company value)
 		{
+			bool resval = Company.CreatingOrUpdatingCompany(value.Id, value.Name);
+			return resval ? StatusCode(StatusCodes.Status200OK) : StatusCode(StatusCodes.Status204NoContent);
 		}
 
 		// DELETE api/values/5
