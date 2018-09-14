@@ -7,9 +7,11 @@ namespace CompanyAPI.Helper
 {
 	[Serializable]
 	public class RepositoryException : Exception
-	{ public UpdateResultType Type { get; set; }
+	{
+		public UpdateResultType Type { get; set; }
+		public string ErrorMsg { get; set; }
 		public RepositoryException(UpdateResultType type) { Type = type; }
-		public RepositoryException(string message, UpdateResultType type) : base(message) { Type = type; }
+		public RepositoryException(string message, UpdateResultType type) : base(message) { Type = type; ErrorMsg = message; }
 		public RepositoryException(string message, Exception inner) : base(message, inner) { }
 		protected RepositoryException(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context) : base(info, context) { }
 	}
