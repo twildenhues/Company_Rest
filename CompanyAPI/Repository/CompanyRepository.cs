@@ -76,9 +76,15 @@ namespace CompanyAPI.Repository
 		{
 			try
 			{
-				value.Id = -1;
-				value.DeletedTime = null;
-				return CreatingOrUpdatingCompany(value);
+				if (value.Name != null)
+				{
+					value.Id = -1;
+					value.DeletedTime = null;
+					return CreatingOrUpdatingCompany(value);
+				}
+				else {
+					return false;
+				}
 			}
 			catch (Exception ex)
 			{
