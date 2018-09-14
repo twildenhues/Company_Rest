@@ -1,19 +1,18 @@
 ﻿using System;
-using System.Data;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace CompanyAPI.Models
 {
-	public class Company : Dto.CompanyDto
+	public class Address
 	{
-		public DateTime? CreatedTime { get; set; }
+		public int Id { get; set; }
 		public string Country { get; set; }
 		public string City { get; set; }
 		public int Zip { get; set; }
 		public string Street { get; set; }
-		public string DepartementName { get; set; }
-		public int ManagerId { get; set; }
+		public DateTime? CreatedTime { get; set; }
 		public DateTime? DeletedTime { get; set; }
-
 	}
 }
-
