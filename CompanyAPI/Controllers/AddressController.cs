@@ -4,18 +4,17 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
-
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+using CompanyAPI.Interfaces;
 
 namespace CompanyAPI.Controllers
 {
-	[Route("api/adress")]
+	[Route("api/address")]
 	public class AddressController : Controller
 	{
-		Repository.AddressRepository Address;
-		public AddressController()
+		private IAddressRepository Address;
+		public AddressController(IAddressRepository AddressRepository)
 		{
-			Address = new Repository.AddressRepository();
+			Address = AddressRepository;
 		}
 		// GET: api/<controller>
 		[HttpGet]

@@ -14,5 +14,7 @@ namespace CompanyAPI.Models
 		public string Street { get; set; }
 		public DateTime? CreatedTime { get; set; }
 		public DateTime? DeletedTime { get; set; }
+		public int compId { get; set; }
+		public int empId { get; set; }
 	}
 }

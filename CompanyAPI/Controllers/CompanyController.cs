@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
+using CompanyAPI.Interfaces;
 
 namespace CompanyAPI.Controllers
 {
@@ -8,9 +9,9 @@ namespace CompanyAPI.Controllers
 	[ApiController]
 	public class CompanyController : Controller
 	{
-		Repository.CompanyRepository Company;
-		public CompanyController() {
-			Company = Repository.CompanyRepository.GetInstance();
+		private ICompanyRepository Company;
+		public CompanyController(ICompanyRepository companyRepository) {
+			Company = companyRepository;
 		}
 		// GET api/company/getall
 		[HttpGet]

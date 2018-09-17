@@ -4,28 +4,33 @@ using System.Data;
 using System.Collections.Generic;
 using Dapper;
 using System.Linq;
+using CompanyAPI.Interfaces;
 
 namespace CompanyAPI.Repository
 {
-	class CompanyRepository : IDisposable
+	class CompanyRepository : ICompanyRepository
 	{
-		static CompanyRepository _companyRepository;
-		public static CompanyRepository GetInstance() {
-			if (_companyRepository == null)
-				_companyRepository = new CompanyRepository();
-			return _companyRepository;
-		}
-		private SqlConnection conn = new SqlConnection();
-		private CompanyRepository()
+		IDbContext _dbContext;
+		public CompanyRepository(IDbContext dbContext)
 		{
-			conn.ConnectionString = "Data Source=tappqa;Initial Catalog=Training-TW-Company;Integrated Security=True";
-			conn.Open();
+			_dbContext = dbContext;
 		}
 		public List<Models.Company> ReadCompany()
 		{
 			try
 			{
-				string sqlcmd = "SELECT Id, Name, CreatedTime, Country, City, Zip, Street, DepartementName, ManagerId FROM viCompany";
+				var conn = _dbContext.GetConnection(); 
+				string sqlcmd = "SELECT " +
+									"Id, " +
+									"Name, " +
+									"CreatedTime, " +
+									"Country, " +
+									"City, " +
+									"Zip, " +
+									"Street, " +
+									"DepartementName, " +
+									"ManagerId " +
+								"FROM viCompany";
 				var test = conn.Query<Models.Company>(sqlcmd).ToList();
 				return test;
 			}
@@ -40,7 +45,19 @@ namespace CompanyAPI.Repository
 		{
 			try
 			{
-				string sqlcmd = "SELECT Id, Name, CreatedTime, Country, City, Zip, Street, DepartementName, ManagerId FROM viCompany where Id = @Id";
+				var conn = _dbContext.GetConnection(); 
+				string sqlcmd = "SELECT " +
+									"Id, " +
+									"Name, " +
+									"CreatedTime, " +
+									"Country, " +
+									"City, " +
+									"Zip, " +
+									"Street, " +
+									"DepartementName, " +
+									"ManasgerId " +
+								"FROM viCompany " +
+								"WHERE Id = @Id";
 				var param = new DynamicParameters();
 				param.Add("@Id", Id);
 				var company = conn.QueryFirstOrDefault<Models.Company>(sqlcmd, param);
@@ -109,6 +126,7 @@ namespace CompanyAPI.Repository
 		{
 			try
 			{
+				var conn = _dbContext.GetConnection();
 				var param = new DynamicParameters();
 				param.Add("@Name", value.Name);
 				param.Add("@Id", value.Id);
@@ -120,10 +138,6 @@ namespace CompanyAPI.Repository
 
 				throw new Helper.RepositoryException(ex.Message, UpdateResultType.ERROR);
 			};
-		}
-		public void Dispose()
-		{
-			conn.Close();
 		}
 	}
 }

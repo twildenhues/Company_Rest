@@ -4,25 +4,27 @@ using System.Data;
 using System.Collections.Generic;
 using Dapper;
 using System.Linq;
+using CompanyAPI.Interfaces;
 
 namespace CompanyAPI.Repository
 {
-	class AddressRepository : IDisposable
+	class AddressRepository : IAddressRepository
 	{
-		private SqlConnection conn = new SqlConnection();
-		public AddressRepository()
+		IDbContext _dbContext;
+		public AddressRepository(IDbContext dbContext)
 		{
-			conn.ConnectionString = "Data Source=tappqa;Initial Catalog=Training-TW-Company;Integrated Security=True";
-			conn.Open();
+			_dbContext = dbContext;
 		}
 		public List<Models.Address> ReadAddress()
 		{
+			var conn = _dbContext.GetConnection();
 			string sqlcmd = "SELECT Id, Country, City, Zip, Street, CreatedTime FROM viAddress";
 			var test = conn.Query<Models.Address>(sqlcmd).ToList();
 			return test;
 		}
 		public Models.Address Read(int Id)
 		{
+			var conn = _dbContext.GetConnection();
 			string sqlcmd = "SELECT Id, Country, City, Zip, Street, CreatedTime FROM viAddress FROM viAddress where Id = @Id";
 			var param = new DynamicParameters();
 			param.Add("@Id", Id);
@@ -30,37 +32,73 @@ namespace CompanyAPI.Repository
 			return address;
 
 		}
-		public bool DeleteAddress(int AddressId)
+		public bool DeleteAddress(Models.Address value)
 		{
 			try
 			{
-				var param = new DynamicParameters();
-				param.Add("@Id", AddressId);
-				param.Add("@Delete", DateTime.Now);
-				return conn.Execute("dbo.spCreateOrUpdateAddress", param, commandType: CommandType.StoredProcedure) > 0;
+				if (value.Id != 0)
+				{
+					value.DeletedTime = DateTime.Now;
+					return CreatingOrUpdatingAddress(value);
+				}
+				else
+				{
+					return false;
+				}
 			}
 			catch (SystemException ex)
 			{
 				Console.WriteLine(string.Format("An error occurred: {0}", ex.ToString()));
-				return false;
+				throw new Helper.RepositoryException(ex.Message, UpdateResultType.ERROR);
 			}
 		}
-		public bool CreatingOrUpdatingAddress(int CompanyId, string value, int compId, int empId)
+		public bool Create(Models.Address value)
 		{
-			var param = new DynamicParameters();
-			param.Add("@Country", value);
-			param.Add("@City", CompanyId);
-			param.Add("@Zip", value);
-			param.Add("@Street", value);
-			param.Add("@Id", CompanyId);
-			param.Add("@Delete", null);
-			param.Add("@CompanyId", compId);
-			param.Add("@EmployeeId", empId);
-			return conn.Execute("dbo.spCreateOrUpdateAddress", param, commandType: CommandType.StoredProcedure) > 0;
+			try
+			{
+				if (value != null)
+				{
+					value.Id = -1;
+					value.DeletedTime = null;
+					return CreatingOrUpdatingAddress(value);
+				}
+				else
+				{
+					return false;
+				}
+			}
+			catch (Exception ex)
+			{
+
+				throw new Helper.RepositoryException(ex.Message, UpdateResultType.ERROR);
+			}
 		}
-		public void Dispose()
+		public bool Update(Models.Address value)
 		{
-			conn.Close();
+			try
+			{
+				value.DeletedTime = null;
+				return CreatingOrUpdatingAddress(value);
+			}
+			catch (Exception ex)
+			{
+
+				throw new Helper.RepositoryException(ex.Message, UpdateResultType.ERROR);
+			}
+		}
+		public bool CreatingOrUpdatingAddress(Models.Address value)
+		{
+			var conn = _dbContext.GetConnection();
+			var param = new DynamicParameters();
+			param.Add("@Country", value.Country);
+			param.Add("@City", value.City);
+			param.Add("@Zip", value.Zip);
+			param.Add("@Street", value.Street);
+			param.Add("@Id", value.Id);
+			param.Add("@Delete", value.DeletedTime);
+			param.Add("@CompanyId", value.compId);
+			param.Add("@EmployeeId", value.empId);
+			return conn.Execute("dbo.spCreateOrUpdateAddress", param, commandType: CommandType.StoredProcedure) > 0;
 		}
 	}
 }
