@@ -35,6 +35,7 @@ namespace CompanyAPI
 			services.Configure<DbSettings>(Configuration.GetSection("DbSettings"));
 
 			services.AddSingleton<IDbContext, DbContext>();
+
 			services.AddScoped<ICompanyRepository, CompanyRepository>();
 			services.AddScoped<IAddressRepository, AddressRepository>();
 		}

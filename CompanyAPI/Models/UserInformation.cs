@@ -5,8 +5,9 @@ using System.Threading.Tasks;
 
 namespace CompanyAPI.Models
 {
-	public class DbSettings
+	public class UserInformation
 	{
-		public string Connection { get; set; }
+		public string username { get; set; }
+		public string passwort { get; set; }
 	}
 }

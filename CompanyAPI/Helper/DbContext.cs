@@ -17,7 +17,7 @@ namespace CompanyAPI.Helper
 			_settings = options.Value;
 		}
 		public IDbConnection GetConnection() {
-			var conn = new SqlConnection(_settings.Company);
+			var conn = new SqlConnection(_settings.Connection);
 			conn.Open();
 			return conn;
 		}

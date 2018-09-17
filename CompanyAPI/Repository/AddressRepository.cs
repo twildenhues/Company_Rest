@@ -108,14 +108,14 @@ namespace CompanyAPI.Repository
 		{
 			var conn = _dbContext.GetConnection();
 			var param = new DynamicParameters();
-				param.Add("@Country", value.Country);
-				param.Add("@City", value.City);
-				param.Add("@Zip", value.Zip);
-				param.Add("@Street", value.Street);
-				param.Add("@Id", value.Id);
-				param.Add("@DeletedTime", value.DeletedTime);
-				param.Add("@CompanyId", value.compId);
-				param.Add("@EmployeeId", value.empId);
+			param.Add("@Country", value.Country);
+			param.Add("@City", value.City);
+			param.Add("@Zip", value.Zip);
+			param.Add("@Street", value.Street);
+			param.Add("@Id", value.Id);
+			param.Add("@DeletedTime", value.DeletedTime);
+			param.Add("@CompanyId", value.compId);
+			param.Add("@EmployeeId", value.empId);
 			var resval = conn.Execute("dbo.spCreateOrUpdateAddress", param, commandType: CommandType.StoredProcedure) > 0;
 			return resval;
 		}
