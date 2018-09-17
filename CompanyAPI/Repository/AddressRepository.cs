@@ -18,18 +18,33 @@ namespace CompanyAPI.Repository
 		public List<Models.Address> ReadAddress()
 		{
 			var conn = _dbContext.GetConnection();
-			string sqlcmd = "SELECT Id, Country, City, Zip, Street, CreatedTime FROM viAddress";
-			var test = conn.Query<Models.Address>(sqlcmd).ToList();
-			return test;
+			string sqlcmd = "SELECT " +
+								"Id, " +
+								"Country, " +
+								"City, " +
+								"Zip, " +
+								"Street, " +
+								"CreatedTime " +
+							"FROM viAddress";
+			var resval = conn.Query<Models.Address>(sqlcmd).ToList();
+			return resval;
 		}
 		public Models.Address Read(int Id)
 		{
 			var conn = _dbContext.GetConnection();
-			string sqlcmd = "SELECT Id, Country, City, Zip, Street, CreatedTime FROM viAddress FROM viAddress where Id = @Id";
+			string sqlcmd = "SELECT " +
+								"Id, " +
+								"Country, " +
+								"City, " +
+								"Zip, " +
+								"Street, " +
+								"CreatedTime " +
+							 "FROM viAddress " +
+							 "WHERE Id = @Id";
 			var param = new DynamicParameters();
 			param.Add("@Id", Id);
-			var address = conn.QueryFirstOrDefault<Models.Address>(sqlcmd, param);
-			return address;
+			var resval = conn.QueryFirstOrDefault<Models.Address>(sqlcmd, param);
+			return resval;
 
 		}
 		public bool DeleteAddress(Models.Address value)
@@ -39,7 +54,8 @@ namespace CompanyAPI.Repository
 				if (value.Id != 0)
 				{
 					value.DeletedTime = DateTime.Now;
-					return CreatingOrUpdatingAddress(value);
+					var resval = CreatingOrUpdatingAddress(value);
+					return resval;
 				}
 				else
 				{
@@ -60,7 +76,8 @@ namespace CompanyAPI.Repository
 				{
 					value.Id = -1;
 					value.DeletedTime = null;
-					return CreatingOrUpdatingAddress(value);
+					var resval = CreatingOrUpdatingAddress(value);
+					return resval;
 				}
 				else
 				{
@@ -78,7 +95,8 @@ namespace CompanyAPI.Repository
 			try
 			{
 				value.DeletedTime = null;
-				return CreatingOrUpdatingAddress(value);
+				var resval = CreatingOrUpdatingAddress(value);
+				return resval;
 			}
 			catch (Exception ex)
 			{
@@ -90,15 +108,16 @@ namespace CompanyAPI.Repository
 		{
 			var conn = _dbContext.GetConnection();
 			var param = new DynamicParameters();
-			param.Add("@Country", value.Country);
-			param.Add("@City", value.City);
-			param.Add("@Zip", value.Zip);
-			param.Add("@Street", value.Street);
-			param.Add("@Id", value.Id);
-			param.Add("@Delete", value.DeletedTime);
-			param.Add("@CompanyId", value.compId);
-			param.Add("@EmployeeId", value.empId);
-			return conn.Execute("dbo.spCreateOrUpdateAddress", param, commandType: CommandType.StoredProcedure) > 0;
+				param.Add("@Country", value.Country);
+				param.Add("@City", value.City);
+				param.Add("@Zip", value.Zip);
+				param.Add("@Street", value.Street);
+				param.Add("@Id", value.Id);
+				param.Add("@DeletedTime", value.DeletedTime);
+				param.Add("@CompanyId", value.compId);
+				param.Add("@EmployeeId", value.empId);
+			var resval = conn.Execute("dbo.spCreateOrUpdateAddress", param, commandType: CommandType.StoredProcedure) > 0;
+			return resval;
 		}
 	}
 }

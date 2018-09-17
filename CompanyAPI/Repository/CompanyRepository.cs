@@ -31,8 +31,8 @@ namespace CompanyAPI.Repository
 									"DepartementName, " +
 									"ManagerId " +
 								"FROM viCompany";
-				var test = conn.Query<Models.Company>(sqlcmd).ToList();
-				return test;
+				var resval = conn.Query<Models.Company>(sqlcmd).ToList();
+				return resval;
 			}
 			catch (SqlException ex)
 			{
@@ -60,8 +60,8 @@ namespace CompanyAPI.Repository
 								"WHERE Id = @Id";
 				var param = new DynamicParameters();
 				param.Add("@Id", Id);
-				var company = conn.QueryFirstOrDefault<Models.Company>(sqlcmd, param);
-				return company;
+				var resval = conn.QueryFirstOrDefault<Models.Company>(sqlcmd, param);
+				return resval;
 			}
 			catch (SqlException ex)
 			{
@@ -77,7 +77,8 @@ namespace CompanyAPI.Repository
 				if (value.Id != 0)
 				{
 					value.DeletedTime = DateTime.Now;
-					return CreatingOrUpdatingCompany(value);
+					var resval = CreatingOrUpdatingCompany(value);
+					return resval;
 				}
 				else {
 					return false;
@@ -97,7 +98,8 @@ namespace CompanyAPI.Repository
 				{
 					value.Id = -1;
 					value.DeletedTime = null;
-					return CreatingOrUpdatingCompany(value);
+					var resval = CreatingOrUpdatingCompany(value);
+					return resval;
 				}
 				else {
 					return false;
@@ -114,7 +116,8 @@ namespace CompanyAPI.Repository
 			try
 			{
 				value.DeletedTime = null;
-				return CreatingOrUpdatingCompany(value);
+				var resval = CreatingOrUpdatingCompany(value);
+				return resval;
 			}
 			catch (Exception ex)
 			{
@@ -131,7 +134,8 @@ namespace CompanyAPI.Repository
 				param.Add("@Name", value.Name);
 				param.Add("@Id", value.Id);
 				param.Add("@Delete", value.DeletedTime);
-				return conn.Execute("dbo.spCreateOrUpdateCompany", param, commandType: CommandType.StoredProcedure) > 0;
+				var resval = conn.Execute("dbo.spCreateOrUpdateCompany", param, commandType: CommandType.StoredProcedure) > 0;
+				return resval;
 			}
 			catch (Exception ex)
 			{

@@ -36,20 +36,81 @@ namespace CompanyAPI.Controllers
 
 		// POST api/<controller>
 		[HttpPost]
-		public void Post([FromBody]string value)
+		public IActionResult Post([FromBody] Models.Address value)
 		{
-		}
+			try
+			{
+				bool dt = Address.Create(value);
+				var reval = dt ? StatusCode(StatusCodes.Status200OK) : StatusCode(StatusCodes.Status204NoContent);
+				return reval;
+			}
+			catch (Helper.RepositoryException ex)
+			{
 
-		// PUT api/<controller>/5
-		[HttpPut("{id}")]
-		public void Put(int id, [FromBody]string value)
-		{
+				switch (ex.Type)
+				{
+					case UpdateResultType.SQLERROR:
+						return StatusCode(StatusCodes.Status500InternalServerError, "Internal Server Error");
+					case UpdateResultType.INVALIDEARGUMENT:
+						return StatusCode(StatusCodes.Status409Conflict, "Conflict");
+					case UpdateResultType.ERROR:
+						return StatusCode(StatusCodes.Status400BadRequest, "Bad Request");
+					default:
+						return StatusCode(StatusCodes.Status406NotAcceptable, "Not Acceptable");
+				}
+			}
 		}
-
-		// DELETE api/<controller>/5
-		[HttpDelete("{id}")]
-		public void Delete(int id)
+		// PUT api/values/5
+		[HttpPut]
+		public IActionResult Put([FromBody] Models.Address value)
 		{
+			try
+			{
+				bool dt = Address.Update(value);
+				var resval = dt ? StatusCode(StatusCodes.Status200OK) : StatusCode(StatusCodes.Status204NoContent);
+				return resval;
+			}
+			catch (Helper.RepositoryException ex)
+			{
+
+				switch (ex.Type)
+				{
+					case UpdateResultType.SQLERROR:
+						return StatusCode(StatusCodes.Status500InternalServerError, "Internal Server Error");
+					case UpdateResultType.INVALIDEARGUMENT:
+						return StatusCode(StatusCodes.Status409Conflict, "Conflict");
+					case UpdateResultType.ERROR:
+						return StatusCode(StatusCodes.Status400BadRequest, "Bad Request");
+					default:
+						return StatusCode(StatusCodes.Status406NotAcceptable, "Not Acceptable");
+				}
+			}
+		}
+		// DELETE api/values/5
+		[HttpDelete]
+		public IActionResult Delete([FromBody] Models.Address value)
+		{
+			try
+			{
+				bool dt = Address.DeleteAddress(value);
+				var resval = dt ? StatusCode(StatusCodes.Status200OK) : StatusCode(StatusCodes.Status204NoContent);
+				return resval;
+			}
+			catch (Helper.RepositoryException ex)
+			{
+
+				switch (ex.Type)
+				{
+					case UpdateResultType.SQLERROR:
+						return StatusCode(StatusCodes.Status500InternalServerError, "Internal Server Error");
+					case UpdateResultType.INVALIDEARGUMENT:
+						return StatusCode(StatusCodes.Status409Conflict, "Conflict");
+					case UpdateResultType.ERROR:
+						return StatusCode(StatusCodes.Status400BadRequest, "Bad Request");
+					default:
+						return StatusCode(StatusCodes.Status406NotAcceptable, "Not Acceptable");
+				}
+			}
 		}
 	}
 }
