@@ -15,7 +15,7 @@ namespace CompanyAPI.Repository
 		{
 			_dbContext = dbContext;
 		}
-		public List<Models.Address> ReadAddress()
+		public List<Models.Address> ReadAll()
 		{
 			var conn = _dbContext.GetConnection();
 			string sqlcmd = "SELECT " +

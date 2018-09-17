@@ -7,7 +7,7 @@ namespace CompanyAPI.Interfaces
 {
 	public interface ICompanyRepository
 	{
-		List<Models.Company> ReadCompany();
+		List<Models.Company> ReadAll();
 		Models.Company Read(int i);
 		bool DeleteCompany(Models.Company value);
 		bool Create(Models.Company value);

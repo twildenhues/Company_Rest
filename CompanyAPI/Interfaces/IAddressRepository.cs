@@ -7,7 +7,7 @@ namespace CompanyAPI.Interfaces
 {
 	public interface IAddressRepository
 	{
-		List<Models.Address> ReadAddress();
+		List<Models.Address> ReadAll();
 		Models.Address Read(int Id);
 		bool DeleteAddress(Models.Address value);
 		bool Create(Models.Address value);

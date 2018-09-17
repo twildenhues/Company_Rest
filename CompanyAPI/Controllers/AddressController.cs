@@ -20,7 +20,7 @@ namespace CompanyAPI.Controllers
 		[HttpGet]
 		public IActionResult Get()
 		{
-			List<Models.Address> dt = Address.ReadAddress();
+			List<Models.Address> dt = Address.ReadAll();
 			var reval = dt != null ? StatusCode(StatusCodes.Status200OK, dt) : (IActionResult)StatusCode(StatusCodes.Status204NoContent);
 			return reval;
 		}

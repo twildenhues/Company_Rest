@@ -15,7 +15,7 @@ namespace CompanyAPI.Repository
 		{
 			_dbContext = dbContext;
 		}
-		public List<Models.Company> ReadCompany()
+		public List<Models.Company> ReadAll()
 		{
 			try
 			{
