@@ -76,12 +76,16 @@ namespace CompanyAPI.Repository
 			{
 				if (value.Id != 0)
 				{
-					value.DeletedTime = DateTime.Now;
-					var resval = CreatingOrUpdatingCompany(value);
+					Models.Company temp = new Models.Company
+					{
+						Id = value.Id,
+						DeletedTime = DateTime.Now
+					};
+					var resval = CreatingOrUpdatingCompany(temp);
 					return resval;
 				}
 				else {
-					return false;
+					throw new Helper.RepositoryException(UpdateResultType.INVALIDEARGUMENT);
 				}
 			}
 			catch (SystemException ex)
@@ -96,13 +100,17 @@ namespace CompanyAPI.Repository
 			{
 				if (value.Name != null)
 				{
-					value.Id = -1;
-					value.DeletedTime = null;
+					Models.Company temp = new Models.Company {
+						Id = -1,
+						DeletedTime = value.DeletedTime = null,
+						Name = value.Name
+					};
+					
 					var resval = CreatingOrUpdatingCompany(value);
 					return resval;
 				}
 				else {
-					return false;
+					throw new Helper.RepositoryException(UpdateResultType.INVALIDEARGUMENT);
 				}
 			}
 			catch (Exception ex)
@@ -115,9 +123,16 @@ namespace CompanyAPI.Repository
 		{
 			try
 			{
-				value.DeletedTime = null;
-				var resval = CreatingOrUpdatingCompany(value);
-				return resval;
+				if (value.Id != 0)
+				{
+					value.DeletedTime = null;
+					var resval = CreatingOrUpdatingCompany(value);
+					return resval;
+				}
+				else
+				{
+					throw new Helper.RepositoryException(UpdateResultType.INVALIDEARGUMENT);
+				}
 			}
 			catch (Exception ex)
 			{
