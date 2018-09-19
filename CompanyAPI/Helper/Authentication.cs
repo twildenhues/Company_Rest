@@ -37,7 +37,6 @@ namespace CompanyAPI.Helper {
 					case "bearer":
 						string decodedStringBearer = (code.Split(" ")[1]).Split(".")[1];
 
-						if (decodedStringBearer.Length % 4 == 1) decodedStringBearer = decodedStringBearer + "===";
 						if (decodedStringBearer.Length % 4 == 2) decodedStringBearer = decodedStringBearer + "=="; 
 						if (decodedStringBearer.Length % 4 == 3) decodedStringBearer = decodedStringBearer + "=";
 

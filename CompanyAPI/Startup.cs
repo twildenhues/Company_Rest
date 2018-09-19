@@ -14,6 +14,11 @@ using CompanyAPI.Interfaces;
 using CompanyAPI.Repository;
 using CompanyAPI.Models;
 using CompanyAPI.Helper;
+using TobitLogger.Core;
+using TobitLogger.Logstash;
+using TobitLogger.Middleware;
+using TobitWebApiExtensions.Extensions;
+using Microsoft.AspNetCore.Http;
 
 namespace CompanyAPI
 {
@@ -29,6 +34,10 @@ namespace CompanyAPI
 		// This method gets called by the runtime. Use this method to add services to the container.
 		public void ConfigureServices(IServiceCollection services)
 		{
+			services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+			services.AddSingleton<ILogContextProvider, RequestGuidContextProvider>();
+
+			services.AddChaynsToken();
 			services.AddMvc();
 			services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
@@ -41,8 +50,11 @@ namespace CompanyAPI
 		}
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-		public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+		public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory, ILogContextProvider logContextProvider)
 		{
+			loggerFactory.AddLogstashLogger(Configuration.GetSection("Logger"), logContextProvider: logContextProvider);
+
+
 			if (env.IsDevelopment())
 			{
 				app.UseDeveloperExceptionPage();
@@ -52,7 +64,9 @@ namespace CompanyAPI
 				app.UseHsts();
 			}
 
+			app.UseRequestLogging();
 			// app.UseHttpsRedirection();
+			app.UseAuthentication();
 			app.UseMvc();
 		}
 	}

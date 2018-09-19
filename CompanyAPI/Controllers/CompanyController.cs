@@ -2,6 +2,11 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
 using CompanyAPI.Interfaces;
+using TobitWebApiExtensions.Extensions;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.Extensions.Logging;
+using TobitLogger;
+using TobitLogger.Core;
 
 namespace CompanyAPI.Controllers
 {
@@ -10,8 +15,10 @@ namespace CompanyAPI.Controllers
 	public class CompanyController : Controller
 	{
 		private Helper.Authorization Authorization;
+		private readonly ILogger<CompanyController> logger;
 		private ICompanyRepository Company;
-		public CompanyController(ICompanyRepository companyRepository) {
+		public CompanyController(ICompanyRepository companyRepository, ILoggerFactory loggerFactory) {
+			logger = loggerFactory.CreateLogger<CompanyController>();
 			Company = companyRepository;
 			Authorization = new Helper.Authorization();
 		}
@@ -30,12 +37,16 @@ namespace CompanyAPI.Controllers
 			{
 				switch (ex.Type) {
 					case UpdateResultType.SQLERROR:
+						logger.Error(ex.ErrorMsg);
 						return StatusCode(StatusCodes.Status500InternalServerError, "Internal Server Error");
 					case UpdateResultType.INVALIDEARGUMENT:
+						logger.Error(ex.ErrorMsg);
 						return StatusCode(StatusCodes.Status409Conflict, "Conflict");
 					case UpdateResultType.ERROR:
+						logger.Error(ex.ErrorMsg);
 						return StatusCode(StatusCodes.Status400BadRequest, "Bad Request");
 					default:
+						logger.Error(ex.ErrorMsg);
 						return StatusCode(StatusCodes.Status406NotAcceptable, "Not Acceptable");
 				}
 			}
@@ -57,12 +68,16 @@ namespace CompanyAPI.Controllers
 				switch (ex.Type)
 				{
 					case UpdateResultType.SQLERROR:
+						logger.Error(ex.ErrorMsg);
 						return StatusCode(StatusCodes.Status500InternalServerError, "Internal Server Error");
 					case UpdateResultType.INVALIDEARGUMENT:
+						logger.Error(ex.ErrorMsg);
 						return StatusCode(StatusCodes.Status409Conflict, "Conflict");
 					case UpdateResultType.ERROR:
+						logger.Error(ex.ErrorMsg);
 						return StatusCode(StatusCodes.Status400BadRequest, "Bad Request");
 					default:
+						logger.Error(ex.ErrorMsg);
 						return StatusCode(StatusCodes.Status406NotAcceptable, "Not Acceptable");
 				}
 			}
@@ -70,104 +85,97 @@ namespace CompanyAPI.Controllers
 		
 		// POST api/values
 		[HttpPost]
+		[Authorize(Roles ="1")]
 		public IActionResult Post([FromBody] Models.Company value)
 		{
-			string rawString = Request.Headers["Authorization"].ToString();
-			var result = Authorization.IsAuthorized(rawString);
-			if (result) {
-				try
-				{
-					bool dt = Company.Create(value);
-					var reval = dt ? StatusCode(StatusCodes.Status200OK) : (IActionResult)StatusCode(StatusCodes.Status204NoContent);
-					return reval;
-				}
-				catch (Helper.RepositoryException ex)
-				{
+			try
+			{
+				bool dt = Company.Create(value);
+				var reval = dt ? StatusCode(StatusCodes.Status200OK) : (IActionResult)StatusCode(StatusCodes.Status204NoContent);
+				return reval;
+			}
+			catch (Helper.RepositoryException ex)
+			{
 
-					switch (ex.Type)
-					{
-						case UpdateResultType.SQLERROR:
-							return StatusCode(StatusCodes.Status500InternalServerError, "Internal Server Error");
-						case UpdateResultType.INVALIDEARGUMENT:
-							return StatusCode(StatusCodes.Status409Conflict, "Conflict");
-						case UpdateResultType.ERROR:
-							return StatusCode(StatusCodes.Status400BadRequest, "Bad Request");
-						default:
-							return StatusCode(StatusCodes.Status406NotAcceptable, "Not Acceptable");
-					}
+				switch (ex.Type)
+				{
+					case UpdateResultType.SQLERROR:
+						logger.Error(ex.ErrorMsg);
+						return StatusCode(StatusCodes.Status500InternalServerError, "Internal Server Error");
+					case UpdateResultType.INVALIDEARGUMENT:
+						logger.Error(ex.ErrorMsg);
+						return StatusCode(StatusCodes.Status409Conflict, "Conflict");
+					case UpdateResultType.ERROR:
+						logger.Error(ex.ErrorMsg);
+						return StatusCode(StatusCodes.Status400BadRequest, "Bad Request");
+					default:
+						logger.Error(ex.ErrorMsg);
+						return StatusCode(StatusCodes.Status406NotAcceptable, "Not Acceptable");
 				}
-			} else {
-				return StatusCode(StatusCodes.Status401Unauthorized, "You are not allowed to do that!");
 			}
 		}
 		
 		// PUT api/values/5
 		[HttpPut]
+		[Authorize(Roles = "1")]
 		public IActionResult Put([FromBody] Models.Company value)
 		{
-			string rawString = Request.Headers["Authorization"].ToString();
-			var result = Authorization.IsAuthorized(rawString);
-			if (result)
+			try
 			{
-				try
-				{
-					bool dt = Company.Update(value);
-					var resval = dt ? StatusCode(StatusCodes.Status200OK) : StatusCode(StatusCodes.Status204NoContent);
-					return resval;
-				}
-				catch (Helper.RepositoryException ex)
-				{
-
-					switch (ex.Type)
-					{
-						case UpdateResultType.SQLERROR:
-							return StatusCode(StatusCodes.Status500InternalServerError, "Internal Server Error");
-						case UpdateResultType.INVALIDEARGUMENT:
-							return StatusCode(StatusCodes.Status403Forbidden, "Conflict");
-						case UpdateResultType.ERROR:
-							return StatusCode(StatusCodes.Status400BadRequest, "Bad Request");
-						default:
-							return StatusCode(StatusCodes.Status406NotAcceptable, "Not Acceptable");
-					}
-				}
+				bool dt = Company.Update(value);
+				var resval = dt ? StatusCode(StatusCodes.Status200OK) : StatusCode(StatusCodes.Status204NoContent);
+				return resval;
 			}
-			else {
-				return StatusCode(StatusCodes.Status401Unauthorized, "You are not allowed to do that!");
+			catch (Helper.RepositoryException ex)
+			{
+
+				switch (ex.Type)
+				{
+					case UpdateResultType.SQLERROR:
+						logger.Error(ex.ErrorMsg);
+						return StatusCode(StatusCodes.Status500InternalServerError, "Internal Server Error");
+					case UpdateResultType.INVALIDEARGUMENT:
+						logger.Error(ex.ErrorMsg);
+						return StatusCode(StatusCodes.Status403Forbidden, "Conflict");
+					case UpdateResultType.ERROR:
+						logger.Error(ex.ErrorMsg);
+						return StatusCode(StatusCodes.Status400BadRequest, "Bad Request");
+					default:
+						logger.Error(ex.ErrorMsg);
+						return StatusCode(StatusCodes.Status406NotAcceptable, "Not Acceptable");
+				}
 			}
 		}
 		
 		// DELETE api/values/5
 		[HttpDelete]
+		[Authorize(Roles = "1")]
 		public IActionResult Delete([FromBody] Models.Company value)
 		{
-			string rawString = Request.Headers["Authorization"].ToString();
-			var result = Authorization.IsAuthorized(rawString);
-			if (result)
+			try
 			{
-				try
-				{
-					bool dt = Company.DeleteCompany(value);
-					var resval = dt ? StatusCode(StatusCodes.Status200OK) : StatusCode(StatusCodes.Status204NoContent);
-					return resval;
-				}
-				catch (Helper.RepositoryException ex)
-				{
-
-					switch (ex.Type)
-					{
-						case UpdateResultType.SQLERROR:
-							return StatusCode(StatusCodes.Status500InternalServerError, "Internal Server Error");
-						case UpdateResultType.INVALIDEARGUMENT:
-							return StatusCode(StatusCodes.Status409Conflict, "Conflict");
-						case UpdateResultType.ERROR:
-							return StatusCode(StatusCodes.Status400BadRequest, "Bad Request");
-						default:
-							return StatusCode(StatusCodes.Status406NotAcceptable, "Not Acceptable");
-					}
-				}
+				bool dt = Company.DeleteCompany(value);
+				var resval = dt ? StatusCode(StatusCodes.Status200OK) : StatusCode(StatusCodes.Status204NoContent);
+				return resval;
 			}
-			else {
-				return StatusCode(StatusCodes.Status401Unauthorized, "You are not allowed to do that!");
+			catch (Helper.RepositoryException ex)
+			{
+
+				switch (ex.Type)
+				{
+					case UpdateResultType.SQLERROR:
+						logger.Error(ex.ErrorMsg);
+						return StatusCode(StatusCodes.Status500InternalServerError, "Internal Server Error");
+					case UpdateResultType.INVALIDEARGUMENT:
+						logger.Error(ex.ErrorMsg);
+						return StatusCode(StatusCodes.Status409Conflict, "Conflict");
+					case UpdateResultType.ERROR:
+						logger.Error(ex.ErrorMsg);
+						return StatusCode(StatusCodes.Status400BadRequest, "Bad Request");
+					default:
+						logger.Error(ex.ErrorMsg);
+						return StatusCode(StatusCodes.Status406NotAcceptable, "Not Acceptable");
+				}
 			}
 		}
 	}
